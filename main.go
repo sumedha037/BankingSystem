@@ -1,7 +1,6 @@
 package main
 
-import "BankingSystem/app"
+func main(){
 
-func main() {
-	app.Start()
 }
+
