@@ -11,8 +11,9 @@ import (
 func TestWithdraw(t *testing.T){
 
 	AccountDB:=adaptars.NewAccountDB()
+	Helper:=NewHelperService(AccountDB)
 	
-	b:=NewBankingService(AccountDB,nil,nil)
+	b:=NewTransactionService(AccountDB,nil,Helper,nil)
 
 	var acccount = domain.Account{
        AccountNo: "ab123",
@@ -36,8 +37,10 @@ func TestWithdraw(t *testing.T){
 func TestDeposite(t *testing.T){
 
 	AccountDB:=adaptars.NewAccountDB()
+	TransactionDB:=adaptars.NewTransactionDB()
+	Helper:=NewHelperService(AccountDB)
 	
-	b:=NewBankingService(AccountDB,nil,nil)
+	b:=NewTransactionService(AccountDB,TransactionDB,Helper,nil)
 
 	var acccount = domain.Account{
        AccountNo: "ab123",
@@ -61,8 +64,9 @@ func TestDeposite(t *testing.T){
 func TestBalance(t *testing.T){
 
 	AccountDB:=adaptars.NewAccountDB()
+	Helper:=NewHelperService(AccountDB)
 	
-	b:=NewBankingService(AccountDB,nil,nil)
+	b:=NewBankingService(AccountDB,nil,nil,Helper,nil)
 
 	var acccount = domain.Account{
        AccountNo: "ab123",
@@ -91,8 +95,9 @@ func TestBalance(t *testing.T){
 func TestSetPin(t *testing.T){
 
 	AccountDB:=adaptars.NewAccountDB()
+	Helper:=NewHelperService(AccountDB)
 	
-	b:=NewBankingService(AccountDB,nil,nil)
+	b:=NewBankingService(AccountDB,nil,nil,Helper,nil)
 
 	var acccount = domain.Account{
        AccountNo: "ab123",
@@ -121,8 +126,10 @@ func TestSetPin(t *testing.T){
 func TestTransfer(t *testing.T){
 	TransactionDB:=adaptars.NewTransactionDB()
 	AccountDB:=adaptars.NewAccountDB()
+	Helper:=NewHelperService(AccountDB)
+	IdGenerator:=NewIdGenerator()
 	
-	b:=NewBankingService(AccountDB,nil,TransactionDB)
+	b:=NewTransactionService(AccountDB,TransactionDB,Helper,IdGenerator)
 
 	var account1 = domain.Account{
        AccountNo: "ab123",
@@ -156,11 +163,13 @@ func TestTransfer(t *testing.T){
 
 
 func TestCreateAccount(t *testing.T){
-	TransactionDB:=adaptars.NewTransactionDB()
 	CustomerDB:=adaptars.NewCustomerDB()
 	AccountDB:=adaptars.NewAccountDB()
+	Helper:=NewHelperService(AccountDB)
+	IdGenerator:=NewIdGenerator()
+	TransactionDB:=adaptars.NewTransactionDB()
 	
-	b:=NewBankingService(AccountDB,CustomerDB,TransactionDB)
+	b:=NewBankingService(AccountDB,CustomerDB,TransactionDB,Helper,IdGenerator)
 
 	var customer= domain.Customer{
 		CustomerId: "cust1",
@@ -186,8 +195,10 @@ func TestCreateAccount(t *testing.T){
 func TestValidateUser(t *testing.T){
 
 	AccountDB:=adaptars.NewAccountDB()
+	Helper:=NewHelperService(AccountDB)
 	
-	b:=NewBankingService(AccountDB,nil,nil)
+	b:=NewBankingService(AccountDB,nil,nil,Helper,nil)
+
 
 	var account1 = domain.Account{
        AccountNo: "ab123",
@@ -199,10 +210,10 @@ func TestValidateUser(t *testing.T){
 	
 	AccountDB.Account["ab123"]=account1
 
-	_,err:=b.ValidateUser("ab123","000123")
+	_,err:=b.HelperService.ValidateUser("ab123","000123")
 	assert.NoError(t,err,"Expected true")
 
-	_,err=b.ValidateUser("ab123","122456")
+	_,err=b.HelperService.ValidateUser("ab123","122456")
      assert.Error(t,err,"Expected error")
 }
 
@@ -212,8 +223,9 @@ func TestValidateUser(t *testing.T){
 func TestIncreaseAmount(t *testing.T){
 
 	AccountDB:=adaptars.NewAccountDB()
+	Helper:=NewHelperService(AccountDB)
 
-	b:=NewBankingService(AccountDB,nil,nil)
+	b:=NewBankingService(AccountDB,nil,nil,Helper,nil)
 
 	var account1 = domain.Account{
        AccountNo: "ab123",
@@ -224,7 +236,7 @@ func TestIncreaseAmount(t *testing.T){
 	}
     AccountDB.Account["ab123"]=account1
 
-	err:=b.IncreaseAmount(nil,"ab123",1000)
+	err:=b.HelperService.IncreaseAmount("ab123",1000)
 	if err!=nil{
 		t.Error("error not expected")
 	}
@@ -239,8 +251,9 @@ func TestIncreaseAmount(t *testing.T){
 func TestDecreaseAmount(t *testing.T){
 
 	AccountDB:=adaptars.NewAccountDB()
+	Helper:=NewHelperService(AccountDB)
 
-	b:=NewBankingService(AccountDB,nil,nil)
+	b:=NewBankingService(AccountDB,nil,nil,Helper,nil)
 
 	var account1 = domain.Account{
        AccountNo: "ab123",
@@ -251,7 +264,7 @@ func TestDecreaseAmount(t *testing.T){
 	}
     AccountDB.Account["ab123"]=account1
 	
-	err:=b.DecreaseAmount(nil,"ab123",1000)
+	err:=b.HelperService.DecreaseAmount("ab123",1000)
 	if err!=nil{
 		t.Error("error not expected")
 	}

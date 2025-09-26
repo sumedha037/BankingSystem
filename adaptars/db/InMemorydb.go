@@ -2,8 +2,8 @@ package db
 
 import (
 	"BankingSystem/Core/domain"
+	"BankingSystem/Core/ports"
 	"fmt"
-	"database/sql"
 )
 
 
@@ -71,7 +71,7 @@ func(d *AccountDB)GetBalance(accountNo string)(float64,error){
 	return d.Account[accountNo].Balance,nil
 }
 
-func(d *AccountDB)SaveBalance(tx *sql.Tx,accountNo string,amount float64)error{
+func(d *AccountDB)SaveBalance(accountNo string,amount float64)error{
 
 	account,exist:=d.Account[accountNo];if !exist{
       return fmt.Errorf("account no.does not exist %v",accountNo)
@@ -101,6 +101,21 @@ func(d *AccountDB)SaveAccount(AccountNo string,customerId string,accountType str
 	return nil
 }
 
+
+func(d *AccountDB)Begin()(ports.Transaction,error){
+   return &SqlDBTransactionDB{},nil
+}
+
+type SqlDBTransactionDB struct{}
+
+
+func (s *SqlDBTransactionDB)Commit()error{
+	return nil
+}
+
+func (s *SqlDBTransactionDB)Rollback()error{
+	return nil
+}
 
 
 type TransactionDB struct{

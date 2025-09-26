@@ -19,7 +19,7 @@ func (h *Handlers) Login(w http.ResponseWriter,r *http.Request){
 		 return
 	}
 
-	ok,err:=h.Service.ValidateUser(input.AccountNo,input.Pin);if !ok {
+	ok,err:=h.helperService.ValidateUser(input.AccountNo,input.Pin);if !ok {
 		 http.Error(w,err.Error(),http.StatusUnauthorized)
 	   return
 	}

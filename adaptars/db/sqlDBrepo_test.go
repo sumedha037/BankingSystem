@@ -4,7 +4,7 @@ package db
 
 import (
     "BankingSystem/Core/domain"
-   
+    "github.com/stretchr/testify/assert"
     "testing"
 
     "github.com/DATA-DOG/go-sqlmock"
@@ -171,31 +171,27 @@ mock.ExpectQuery(`(?i)SELECT\s+\*\s+FROM\s+Account\s+WHERE\s+AccountNo\s*=\s*\?`
 }
 
 
-func TestSaveBalance(t *testing.T){
-    db, mock, err := sqlmock.New()
-    if err != nil {
-        t.Fatalf("Failed to create sqlmock: %v", err)
-    }
-    defer db.Close()
 
-    repo := NewAccount(db)
+func TestSaveBalance(t *testing.T) {
+	
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("error opening stub database connection: %s", err)
+	}
+	defer db.Close()
 
-    account:=domain.Account{
-		AccountNo: "abc123",
-    }
-     
-      amount:=3000.00
-     mock.ExpectExec(`(?i)UPDATE\s+Account\s+SET\s+Balance\s*=\s*\?\s+WHERE\s+AccountNo\s*=\s*\?`).WithArgs(amount,account.AccountNo).WillReturnResult(sqlmock.NewResult(1,1))
+	mock.ExpectBegin()
+	mock.ExpectExec("UPDATE Account SET Balance=\\? Where AccountNo=\\?").
+		WithArgs(5000.0, "abc123").
+		WillReturnResult(sqlmock.NewResult(0, 1))
 
-    err = repo.SaveBalance(nil,account.AccountNo,amount)
-    if err != nil {
-        t.Errorf("Expected no error, got %v", err)
-    }
+	accDB := &AccountSqlDB{db: db}
 
 
-    if err := mock.ExpectationsWereMet(); err != nil {
-        t.Errorf("Unmet expectations: %v", err)
-    }
+	err = accDB.SaveBalance("abc123", 5000.0)
+
+	assert.NoError(t, err)
+	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetTransactionDetails(t *testing.T){

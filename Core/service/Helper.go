@@ -2,7 +2,7 @@ package service
 
 import (
 	customerrors "BankingSystem/customErrors"
-	"database/sql"
+  "BankingSystem/Core/ports"
 	"fmt"
 	"log"
 	"os"
@@ -10,8 +10,23 @@ import (
 )
 
 
+type HelperService struct{
+  AccountRepo ports.AccountRepository
+}
 
-func(b *BankingService) ValidateUser(accountNo string,Pin string)(bool,error){
+func NewHelperService(AccountRepo ports.AccountRepository)*HelperService{
+  return &HelperService{AccountRepo:AccountRepo}
+}
+
+type IdGenerator struct{}
+
+func NewIdGenerator()*IdGenerator{
+    return &IdGenerator{}
+}
+
+
+
+func(b *HelperService) ValidateUser(accountNo string,Pin string)(bool,error){
 
    s,err:=b.AccountRepo.GetPin(accountNo)
    if err!=nil{
@@ -27,7 +42,7 @@ func(b *BankingService) ValidateUser(accountNo string,Pin string)(bool,error){
 
 
 
-func (b *BankingService) IncreaseAmount(tx *sql.Tx,accountNo string,amount float64)error{
+func (b *HelperService) IncreaseAmount(accountNo string,amount float64)error{
    currentAmount,err:=b.AccountRepo.GetBalance(accountNo)
   if err!=nil{
     log.Printf("unable to get current balance %v",err)
@@ -38,12 +53,12 @@ func (b *BankingService) IncreaseAmount(tx *sql.Tx,accountNo string,amount float
     return customerrors.NewServiceError("IncreaseAmount",fmt.Errorf("amount less than zero"))
   }
   currentAmount+=amount
-  return b.AccountRepo.SaveBalance(tx,accountNo,currentAmount)
+  return b.AccountRepo.SaveBalance(accountNo,currentAmount)
 }
 
 
 
-func (b *BankingService) DecreaseAmount(tx *sql.Tx,accountNo string,amount float64)error{
+func (b *HelperService) DecreaseAmount(accountNo string,amount float64)error{
    currentAmount,err:=b.AccountRepo.GetBalance(accountNo)
   if err!=nil{
     log.Printf("unable to get current balance %v",err)
@@ -56,10 +71,10 @@ func (b *BankingService) DecreaseAmount(tx *sql.Tx,accountNo string,amount float
     return customerrors.NewServiceError("DecreaseAmount",fmt.Errorf("insufficient Amount"))
   }
   currentAmount-=amount
-  return b.AccountRepo.SaveBalance(tx,accountNo,currentAmount)
+  return b.AccountRepo.SaveBalance(accountNo,currentAmount)
 }
 
-func (b *BankingService) GenerateSequentialID(length int) string {
+func (b *IdGenerator) GenerateSequentialID(length int) string {
 
 	counter := 0
 	data, err := os.ReadFile("counter.txt")

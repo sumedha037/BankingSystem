@@ -103,7 +103,12 @@ func(d *AccountSqlDB)GetBalance(accountNo string)(float64,error){
 	return balance,nil
 }
 
-func(d *AccountSqlDB)SaveBalance(tx *sql.Tx,accountNo string,amount float64)error{
+func(d *AccountSqlDB)SaveBalance(accountNo string,amount float64)error{
+
+	Tx,err:=d.Begin();if err!=nil{
+		return customerrors.NewRepoError("SaveAccount",err)
+	}
+    tx:=Tx.(*SqlDBTransaction).Tx
 
    result,err:=tx.Exec("UPDATE Account SET Balance=? Where AccountNo=?",amount,accountNo)
 	if err!=nil{

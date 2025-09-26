@@ -21,9 +21,13 @@ func Start(){
    AccountRepo:=adaptars.NewAccount(database)
    TransactionRepo:=adaptars.NewTransaction(database)
 
-   BankingService:=service.NewBankingService(AccountRepo,CustomerRepo,TransactionRepo)
+   HelperService:=service.NewHelperService(AccountRepo)
+   IdGenerator:=service.NewIdGenerator()
+
+   TransactionService:=service.NewTransactionService(AccountRepo,TransactionRepo,HelperService,IdGenerator)
+   BankingService:=service.NewBankingService(AccountRepo,CustomerRepo,TransactionRepo,HelperService,IdGenerator)
    
-   h:=handlers.NewHandler(BankingService)
+    h:=handlers.NewHandler(TransactionService,BankingService,HelperService)
     r := mux.NewRouter()
     r.HandleFunc("/CreateAccount", h.CreateAccount).Methods(http.MethodPost)
 	r.HandleFunc("/SetPin", h.SetPin).Methods(http.MethodPost)

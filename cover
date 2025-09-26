@@ -1,0 +1,20 @@
+mode: set
+BankingSystem/main.go:5.13,7.2 1 0
+BankingSystem/middleware/authMiddleware.go:13.51,14.71 1 0
+BankingSystem/middleware/authMiddleware.go:14.71,17.14 3 0
+BankingSystem/middleware/authMiddleware.go:17.14,20.4 2 0
+BankingSystem/middleware/authMiddleware.go:22.3,23.39 2 0
+BankingSystem/app/app.go:16.13,40.2 16 0
+BankingSystem/dbInstance/mysql.go:20.28,22.20 1 0
+BankingSystem/dbInstance/mysql.go:22.20,24.23 2 0
+BankingSystem/dbInstance/mysql.go:24.23,26.10 1 0
+BankingSystem/dbInstance/mysql.go:27.9,35.23 8 0
+BankingSystem/dbInstance/mysql.go:35.23,37.10 1 0
+BankingSystem/dbInstance/mysql.go:39.9,39.41 1 0
+BankingSystem/dbInstance/mysql.go:39.41,41.10 1 0
+BankingSystem/dbInstance/mysql.go:43.9,43.55 1 0
+BankingSystem/dbInstance/mysql.go:46.5,46.14 1 0
+BankingSystem/customErrors/repoErrors.go:10.35,12.2 1 0
+BankingSystem/customErrors/repoErrors.go:14.56,19.2 1 0
+BankingSystem/customErrors/serviceErrors.go:10.38,12.2 1 0
+BankingSystem/customErrors/serviceErrors.go:14.59,19.2 1 0
